@@ -1181,8 +1181,8 @@ const getFragmentConfigs = async (env, hostName, client) => {
     const workerLessConfig = await buildWorkerLessConfig(env, client); 
     Configs.push(
         { address: 'Best-Ping', config: bestPing}, 
-        { address: 'Best-Fragment', config: bestFragment}, 
-        { address: 'WorkerLess', config: workerLessConfig}
+        { address: 'Best-Fragment', config: bestFragment} 
+        // { address: 'WorkerLess', config: workerLessConfig}
     );
 
     return Configs;
