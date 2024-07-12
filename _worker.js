@@ -943,54 +943,54 @@ const buildProxyOutbound = async (proxyParams) => {
     return proxyOutbound;
 }
 
-const buildWorkerLessConfig = async (env, client) => {
-    let proxySettings = {};
+// const buildWorkerLessConfig = async (env, client) => {
+//     let proxySettings = {};
 
-    try {
-        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
-    } catch (error) {
-        console.log(error);
-        throw new Error(`An error occurred while generating WorkerLess config - ${error}`);
-    }
+//     try {
+//         proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+//     } catch (error) {
+//         console.log(error);
+//         throw new Error(`An error occurred while generating WorkerLess config - ${error}`);
+//     }
 
-    const { remoteDNS, localDNS, lengthMin,  lengthMax,  intervalMin,  intervalMax, blockAds, bypassIran, blockPorn, bypassLAN } = proxySettings;  
-    let fakeOutbound = structuredClone(xrayOutboundTemp);
-    delete fakeOutbound.mux;
-    fakeOutbound.settings.vnext[0].address = 'google.com';
-    fakeOutbound.settings.vnext[0].users[0].id = userID;
-    delete fakeOutbound.streamSettings.sockopt;
-    fakeOutbound.streamSettings.tlsSettings.serverName = 'google.com';
-    fakeOutbound.streamSettings.wsSettings.headers.Host = 'google.com';
-    fakeOutbound.streamSettings.wsSettings.path = '/';
-    delete fakeOutbound.streamSettings.grpcSettings;
-    delete fakeOutbound.streamSettings.tcpSettings;
-    delete fakeOutbound.streamSettings.realitySettings;
-    fakeOutbound.tag = 'fake-outbound';
+//     const { remoteDNS, localDNS, lengthMin,  lengthMax,  intervalMin,  intervalMax, blockAds, bypassIran, blockPorn, bypassLAN } = proxySettings;  
+//     let fakeOutbound = structuredClone(xrayOutboundTemp);
+//     delete fakeOutbound.mux;
+//     fakeOutbound.settings.vnext[0].address = 'google.com';
+//     fakeOutbound.settings.vnext[0].users[0].id = userID;
+//     delete fakeOutbound.streamSettings.sockopt;
+//     fakeOutbound.streamSettings.tlsSettings.serverName = 'google.com';
+//     fakeOutbound.streamSettings.wsSettings.headers.Host = 'google.com';
+//     fakeOutbound.streamSettings.wsSettings.path = '/';
+//     delete fakeOutbound.streamSettings.grpcSettings;
+//     delete fakeOutbound.streamSettings.tcpSettings;
+//     delete fakeOutbound.streamSettings.realitySettings;
+//     fakeOutbound.tag = 'fake-outbound';
 
-    let fragConfig = structuredClone(xrayConfigTemp);
-    fragConfig.remarks  = '@pylin_gap - WorkerLess ⭐'
-    fragConfig.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn, true);
-    fragConfig.outbounds[0].settings.domainStrategy = 'UseIP';
-    fragConfig.outbounds[0].settings.fragment.length = `${lengthMin}-${lengthMax}`;
-    fragConfig.outbounds[0].settings.fragment.interval = `${intervalMin}-${intervalMax}`;
-    fragConfig.outbounds = [
-        {...fragConfig.outbounds[0]}, 
-        {...fakeOutbound}, 
-        {...fragConfig.outbounds[1]}, 
-        {...fragConfig.outbounds[2]}, 
-        {...fragConfig.outbounds[3]}
-    ];
-    fragConfig.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, false, false, true);
-    delete fragConfig.routing.balancers;
-    delete fragConfig.observatory;
+//     let fragConfig = structuredClone(xrayConfigTemp);
+//     fragConfig.remarks  = '@pylin_gap - WorkerLess ⭐'
+//     fragConfig.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn, true);
+//     fragConfig.outbounds[0].settings.domainStrategy = 'UseIP';
+//     fragConfig.outbounds[0].settings.fragment.length = `${lengthMin}-${lengthMax}`;
+//     fragConfig.outbounds[0].settings.fragment.interval = `${intervalMin}-${intervalMax}`;
+//     fragConfig.outbounds = [
+//         {...fragConfig.outbounds[0]}, 
+//         {...fakeOutbound}, 
+//         {...fragConfig.outbounds[1]}, 
+//         {...fragConfig.outbounds[2]}, 
+//         {...fragConfig.outbounds[3]}
+//     ];
+//     fragConfig.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, false, false, true);
+//     delete fragConfig.routing.balancers;
+//     delete fragConfig.observatory;
 
-    if (client === 'nekoray') {
-        fragConfig.inbounds[0].port = 2080;
-        fragConfig.inbounds[1].port = 2081;
-    }
+//     if (client === 'nekoray') {
+//         fragConfig.inbounds[0].port = 2080;
+//         fragConfig.inbounds[1].port = 2081;
+//     }
 
-    return fragConfig;
-}
+//     return fragConfig;
+// }
 
 const getFragmentConfigs = async (env, hostName, client) => {
     let Configs = [];
@@ -1178,7 +1178,7 @@ const getFragmentConfigs = async (env, hostName, client) => {
         bestFragment.inbounds[2].port = 6450;
     }
 
-    const workerLessConfig = await buildWorkerLessConfig(env, client); 
+    // const workerLessConfig = await buildWorkerLessConfig(env, client); 
     Configs.push(
         { address: 'Best-Ping', config: bestPing}, 
         { address: 'Best-Fragment', config: bestFragment} 
